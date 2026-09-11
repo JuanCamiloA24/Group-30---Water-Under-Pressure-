@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AquaGuard | Hospital Water Safety</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="#dashboard"><span class="brand-mark">≈</span><span>AquaGuard<small>PSA HOSPITALS</small></span></a>
+        <div class="hospital-switcher"><span class="avatar">SM</span><span>Santa Marina Hospital<small>Madrid · 284 beds</small></span><span class="chevron">⌄</span></div>
+        <nav aria-label="Main navigation">
+          <button class="nav-link active" data-page="dashboard"><span>▦</span>Overview</button>
+          <button class="nav-link" data-page="assets"><span>⌘</span>Hospital setup</button>
+          <button class="nav-link" data-page="risks"><span>◇</span>Risk register <b id="risk-count">3</b></button>
+          <button class="nav-link" data-page="monitoring"><span>◷</span>Monitoring <b id="monitor-count">4</b></button>
+          <button class="nav-link" data-page="report"><span>▤</span>Compliance report</button>
+          <button class="nav-link" data-page="plan"><span>▤</span>PSA document</button>
+        </nav>
+        <div class="sidebar-footer"><span class="status-dot"></span> PSA review current<br /><small>Last review: 4 Sep 2026</small></div>
+      </aside>
+
+      <main>
+        <header><div class="crumb">COMPLIANCE WORKSPACE <span>/</span> <strong id="page-name">OVERVIEW</strong></div><div class="header-actions"><button class="icon-button" aria-label="Notifications">◌<i></i></button><button class="profile">LM <span>⌄</span></button></div></header>
+
+        <section class="page active" id="dashboard">
+          <div class="demo-banner"><strong>● Demo workspace</strong> — all hospital, sensor, and compliance records shown here are illustrative.</div>
+          <div class="hero"><div><p class="eyebrow">WEDNESDAY, 10 SEPTEMBER</p><h1>Water quality, monitored<br /><em>automatically.</em></h1><p class="lead">Sensor and laboratory readings feed your plan continuously. One exception needs attention today.</p></div><button class="primary" data-page-target="report">View compliance report <span>→</span></button></div>
+          <div class="stats">
+            <article><span class="stat-icon aqua">✓</span><div><strong>91%</strong><p>Compliance score <span class="up">+4% this month</span></p></div></article>
+            <article><span class="stat-icon amber">!</span><div><strong id="overdue-total">4</strong><p>Monitoring checks overdue</p></div></article>
+            <article><span class="stat-icon coral">◇</span><div><strong>3</strong><p>Risks needing review</p></div></article>
+            <article><span class="stat-icon blue">↗</span><div><strong>26</strong><p>Readings received this month</p></div></article>
+          </div>
+          <div class="grid two-one">
+            <section class="card"><div class="card-title"><div><p class="eyebrow">ACTION CENTRE</p><h2>Needs your attention</h2></div><button class="text-button" data-page-target="monitoring">View all →</button></div><div id="attention-list" class="attention-list"></div></section>
+            <section class="card context-card"><p class="eyebrow">LOCAL CONTEXT</p><span class="context-label">Madrid, ES</span><div class="drought-ring"><strong>Moderate</strong><span>Drought exposure</span></div><p>Regional water restrictions are unchanged. Review non-essential water use with facilities.</p><a href="#">View local context →</a></section>
+          </div>
+          <section class="card progress-card"><div class="card-title"><div><p class="eyebrow">PSA HEALTH</p><h2>Annual plan review</h2></div><span class="due">Due 15 Dec 2026</span></div><div class="progress-track"><span></span></div><div class="progress-steps"><span class="done">✓ System mapped</span><span class="done">✓ Risks assessed</span><span class="done">✓ Controls verified</span><span>○ Management sign-off</span></div></section>
+        </section>
+
+        <section class="page" id="assets"><div class="section-heading"><div><p class="eyebrow">HOSPITAL SETUP</p><h1>Build your safety baseline.</h1><p>Connect the site, its water system, critical services, and accountable people before monitoring begins.</p></div><button class="primary" id="add-asset">+ Add asset</button></div><div class="setup-summary"><article><small>HOSPITAL</small><strong>Santa Marina Hospital</strong><span>Madrid · 284 beds · 3 buildings</span></article><article><small>REGULATORY SCOPE</small><strong>Priority hospital</strong><span>PSA review annually</span></article><article><small>WATER SAFETY TEAM</small><strong>4 assigned members</strong><span>Facilities · Quality · Infection control</span></article></div><div class="system-diagram card"><div class="flow-node source">Municipal supply<small>Canal de Isabel II</small></div><div class="flow-line"></div><div class="flow-node storage">Cold-water tanks<small>2 × 4,000 L</small></div><div class="flow-line"></div><div class="flow-node distribution">Distribution<small>12 monitored zones</small></div><div class="flow-line"></div><div class="flow-node critical">Critical units<small>ICU · Dialysis · CSSD</small></div></div><div class="asset-grid" id="asset-grid"></div></section>
+
+        <section class="page" id="risks"><div class="section-heading"><div><p class="eyebrow">RISK REGISTER</p><h1>Prioritise what matters.</h1><p>A single, accountable view of hazards and their control measures.</p></div><button class="primary" id="add-risk">+ Add risk</button></div><section class="card table-card"><table><thead><tr><th>Hazard / location</th><th>Risk level</th><th>Control measure</th><th>Owner</th><th>Review</th></tr></thead><tbody id="risk-table"></tbody></table></section></section>
+
+          <section class="page" id="monitoring"><div class="section-heading"><div><p class="eyebrow">AUTOMATED MONITORING</p><h1>Turn readings into evidence.</h1><p>Connected sensors and lab feeds capture water-quality data, flag exceptions, and preserve the audit trail.</p></div><button class="primary" id="add-check">+ Add reading</button></div><section class="card"><div class="calendar-head"><h2>September 2026</h2><span>All monitoring points</span></div><div id="monitoring-list" class="monitoring-list"></div></section></section>
+
+        <section class="page" id="report"><div class="section-heading"><div><p class="eyebrow">STEP 1 · REPORT</p><h1>Inspection compliance report.</h1><p>A clear, dated snapshot of water-quality evidence, exceptions, and actions for review.</p></div><button class="primary" id="export-report">↓ Export report</button></div><div class="plan-layout"><section class="plan-paper"><div class="paper-head"><span class="brand-mark">≈</span><div><p>WATER-QUALITY COMPLIANCE REPORT</p><h2>Hospital Santa Marina</h2><small>Reporting period: 1–10 Sep 2026 · Draft</small></div></div><hr /><div class="paper-section"><span>01</span><div><h3>Monitoring overview</h3><p>26 readings received from connected monitoring points and laboratory feeds. 22 results are within hospital-defined operating thresholds.</p></div></div><div class="paper-section"><span>02</span><div><h3>Exceptions requiring action</h3><p>Two automatic alerts remain open: Cooling tower CT-04 temperature and Ward 3 flushing-cycle confirmation.</p></div></div><div class="paper-section"><span>03</span><div><h3>Corrective-action evidence</h3><p>All closed actions, supporting records, timestamps, and responsible persons are included in the final export.</p></div></div></section><aside class="card plan-side"><p class="eyebrow">REPORT STATUS</p><strong>2 actions open</strong><p>This report can be exported now. Closing exceptions will update its compliance summary automatically.</p><button class="secondary" data-page-target="monitoring">Review exceptions</button><hr /><p class="eyebrow">NEXT STEP</p><p>Approved report data contributes to the Plan Sanitario del Agua.</p><button class="secondary" data-page-target="plan">View PSA document</button></aside></div></section>
+
+        <section class="page" id="plan"><div class="section-heading"><div><p class="eyebrow">STEP 2 · PSA</p><h1>Plan Sanitario del Agua.</h1><p>Version-controlled, complete, and ready to share with your health authority.</p></div><button class="primary" id="export-plan">↓ Export PDF</button></div><div class="plan-layout"><section class="plan-paper"><div class="paper-head"><span class="brand-mark">≈</span><div><p>PLAN SANITARIO DEL AGUA</p><h2>Hospital Santa Marina</h2><small>Version 1.4 · Last updated 10 Sep 2026</small></div></div><hr /><div class="paper-section"><span>01</span><div><h3>Building & water-system description</h3><p>Complete · Municipal supply, two cold-water storage tanks, twelve distribution zones, and critical clinical units mapped.</p></div></div><div class="paper-section"><span>02</span><div><h3>Risk assessment & control measures</h3><p>Complete · 14 hazards assessed; three items scheduled for review.</p></div></div><div class="paper-section"><span>03</span><div><h3>Automated monitoring & corrective actions</h3><p>In progress · Connected readings are captured automatically; four exceptions need resolution.</p></div></div><div class="paper-section"><span>04</span><div><h3>Annual verification & approval</h3><p>Pending · Management sign-off due 15 December 2026.</p></div></div></section><aside class="card plan-side"><p class="eyebrow">DOCUMENT STATUS</p><strong>Ready with actions</strong><p>Resolve the four monitoring exceptions to prepare this version for approval.</p><button class="secondary" data-page-target="monitoring">Review exceptions</button><hr /><p class="eyebrow">AUDIT TRAIL</p><ul><li><span>10 Sep</span> Automated readings received</li><li><span>04 Sep</span> Annual review started</li><li><span>21 Aug</span> Risk register approved</li></ul></aside></div></section>
+      </main>
+    </div>
+    <dialog id="entry-dialog"><form method="dialog"><button class="close" value="cancel">×</button><p class="eyebrow" id="dialog-kicker">NEW RECORD</p><h2 id="dialog-title">Add a record</h2><label>Title<input id="record-title" required placeholder="e.g. Weekly tank temperature" /></label><label>Owner / location<input id="record-detail" required placeholder="e.g. Facilities team" /></label><div class="dialog-actions"><button class="secondary" value="cancel">Cancel</button><button class="primary" id="save-record" value="default">Save record</button></div></form></dialog>
+    <div id="toast" role="status"></div><script src="app.js"></script>
+  </body>
+</html>
