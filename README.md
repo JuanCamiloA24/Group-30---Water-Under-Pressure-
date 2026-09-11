@@ -46,4 +46,8 @@ These questions aren't here to slow you down — they're part of what's being ev
 
 ## Our Approach
 
-*[To be filled in by the team at the end.]*
+We built AQUAguard, a front-end-only demonstration for a fictional Spanish hospital. It helps a quality manager bring hospital setup information, illustrative monitoring readings, a risk register, alerts, corrective actions, and inspection preparation into one workflow. The inspection report is generated from the stored demo records before the editable Plan Sanitario del Agua is unlocked, making the link between evidence and the plan explicit. All records are fictional and illustrative; the prototype does not issue or imply an official certificate.
+
+### Run locally
+
+This is a zero-dependency static prototype. From the repository root, run `python3 -m http.server 4173` and open `http://localhost:4173`.
