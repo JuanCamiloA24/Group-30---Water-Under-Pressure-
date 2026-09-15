@@ -17,7 +17,75 @@ let checks = [
 ];
 const $ = (s) => document.querySelector(s);
 let actions=[{id:1,title:'Cooling tower temperature below threshold',area:'Punto de muestreo CT-04 · East wing',severity:'Critical',due:'10 Sep · 12:00',owner:'Laura Martín',initials:'LM',escalation:'Infection control notified',status:'Open',reading:'19.2 °C',threshold:'Expected operating range: 20–25 °C',consequence:'Potential Legionella growth risk affecting nearby clinical areas.',recommendation:'Isolate tower, verify sensor, take confirmatory sample, and document the acción correctiva.',history:'10 Sep 08:12 · Automatic alert created'},{id:2,title:'Ward 3 flushing cycle not confirmed',area:'Punto de muestreo · 12 unused outlets',severity:'High',due:'10 Sep · 16:00',owner:'Javier Ruiz',initials:'JR',escalation:'Facilities lead notified',status:'Open',reading:'No confirmation received',threshold:'Weekly flush confirmation required',consequence:'Stagnation may affect water quality at re-opening.',recommendation:'Complete flushing programme and attach maintenance record.',history:'10 Sep 07:30 · Reminder sent'},{id:3,title:'Dialysis water-quality sample due',area:'Punto de muestreo · Renal floor',severity:'Medium',due:'10 Sep · 18:00',owner:'Ana Gómez',initials:'AG',escalation:'Not escalated',status:'Awaiting evidence',reading:'Sample pending',threshold:'Laboratory result required before sign-off',consequence:'Dialysis service may require release hold until result is reviewed.',recommendation:'Collect sample and upload laboratory result.',history:'09 Sep 16:45 · Sampling task assigned'},{id:4,title:'Cold-water tank inspection evidence',area:'Roof plant room · Tank CW-02',severity:'Low',due:'09 Sep · 17:00',owner:'Sergio Molina',initials:'SM',escalation:'Facilities lead notified',status:'Overdue',reading:'Inspection completed; record missing',threshold:'Monthly inspection record required',consequence:'Inspection readiness gap; no immediate clinical impact identified.',recommendation:'Upload maintenance record and close the evidence gap.',history:'09 Sep 17:10 · Marked awaiting evidence'}];
-const pageNames = {dashboard:'OVERVIEW',assets:'HOSPITAL SETUP',risks:'RISK REGISTER',monitoring:'MONITORING',report:'COMPLIANCE REPORT',plan:'PSA DOCUMENT'};
+const pageNames = {dashboard:'OVERVIEW',onboarding:'QUICK START',assets:'HOSPITAL SETUP',risks:'RISK REGISTER',monitoring:'MONITORING',report:'COMPLIANCE REPORT',plan:'PSA DOCUMENT'};
+const hospitals = {
+  santa: {name:'Santa Marina Hospital', short:'Santa Marina Hospital', initials:'SM', meta:'Madrid · 284 beds', city:'Madrid', beds:'284', user:'Laura Martín', score:'91%', readings:'26'},
+  norte: {name:'Hospital del Norte', short:'Hospital del Norte', initials:'HN', meta:'Barcelona · 196 beds', city:'Barcelona', beds:'196', user:'Marc Vidal', score:'94%', readings:'31'},
+  costa: {name:'Costa Salud Medical Centre', short:'Costa Salud', initials:'CS', meta:'Valencia · 118 beds', city:'Valencia', beds:'118', user:'Elena Torres', score:'88%', readings:'19'},
+};
+let activeHospital = localStorage.getItem('aquaguard-hospital') || 'santa';
+function renderHospital(){
+  const hospital = hospitals[activeHospital];
+  $('#hospital-avatar').textContent = hospital.initials;
+  $('#hospital-name').innerHTML = `${hospital.name}<small>${hospital.meta}</small>`;
+  $('#welcome-hospital').textContent = hospital.short;
+  $('#profile-switch').innerHTML = `${hospital.user.split(' ').map(n=>n[0]).join('')} <span>⌄</span>`;
+  document.title = `AquaGuard | ${hospital.name}`;
+  const setupHospital = document.querySelector('.setup-summary article strong');
+  if(setupHospital) setupHospital.textContent = hospital.name;
+  document.querySelectorAll('.paper-head h2').forEach(el => el.textContent = hospital.name);
+  const stats = document.querySelectorAll('.stats article strong');
+  stats[0].textContent = hospital.score;
+  stats[3].textContent = hospital.readings;
+  renderOnboarding();
+}
+let onboardingStep = 0;
+function onboardingData(){ return JSON.parse(localStorage.getItem(`aquaguard-onboarding-${activeHospital}`) || '{}'); }
+function saveOnboarding(data){ localStorage.setItem(`aquaguard-onboarding-${activeHospital}`, JSON.stringify(data)); }
+function renderOnboarding(){
+  const hospital = hospitals[activeHospital], data = onboardingData(), done = data.complete ? 4 : (data._step || 0);
+  $('#onboarding-hospital-tag').textContent = hospital.name.toUpperCase();
+  $('#onboarding-count').textContent = data.complete ? '✓' : `${Math.max(1, 4-done)}`;
+  const labels = ['Site profile', 'Water system', 'Critical services', 'Safety team'];
+  $('#onboarding-steps').innerHTML = labels.map((label,i)=>`<button class="onboarding-step ${i===onboardingStep?'active':''} ${i<done||data.complete?'done':''}" data-onboarding-step="${i}"><span>${i<done||data.complete?'✓':i+1}</span>${label}</button>`).join('');
+  const panels = [
+    `<p class="eyebrow">STEP 1 OF 4 · SITE PROFILE</p><h2>Tell us about ${hospital.short}.</h2><p class="lead">We use this to tailor site labels, reporting headers, and the starting compliance scope.</p><div class="onboarding-fields"><label>Hospital or clinic name<input data-onboarding="name" value="${data.name || hospital.name}" /></label><label>City<input data-onboarding="city" value="${data.city || hospital.city}" /></label><label>Number of beds / chairs<input data-onboarding="capacity" type="number" min="1" value="${data.capacity || hospital.beds}" /></label></div>`,
+    `<p class="eyebrow">STEP 2 OF 4 · WATER SYSTEM</p><h2>Map the essential infrastructure.</h2><p class="lead">A simple starting map is enough. You can add detail later with your facilities team.</p><div class="onboarding-fields"><label>Primary water source<select data-onboarding="source"><option ${data.source==='Municipal supply'?'selected':''}>Municipal supply</option><option ${data.source==='Private borehole'?'selected':''}>Private borehole</option><option ${data.source==='Mixed supply'?'selected':''}>Mixed supply</option></select></label><label>Number of water-storage tanks<input data-onboarding="tanks" type="number" min="0" value="${data.tanks ?? 0}" /></label><label>Buildings or clinical areas<input data-onboarding="areas" value="${data.areas || 'Main building'}" /></label></div>`,
+    `<p class="eyebrow">STEP 3 OF 4 · CRITICAL SERVICES</p><h2>Identify priority water uses.</h2><p class="lead">We will suggest relevant monitoring points and controls for the services you select.</p><div class="service-options">${['Dialysis','ICU / critical care','Sterilisation (CSSD)','Dental care','Cooling towers'].map(service=>`<label><input data-service="${service}" type="checkbox" ${(data.services || []).includes(service)?'checked':''} />${service}</label>`).join('')}</div>`,
+    `<p class="eyebrow">STEP 4 OF 4 · SAFETY TEAM</p><h2>Choose the accountable lead.</h2><p class="lead">Invite the rest of the team later. This person receives the first monitoring and review reminders.</p><div class="onboarding-fields"><label>Water-safety lead<input data-onboarding="lead" value="${data.lead || hospital.user}" /></label><label>Lead email<input data-onboarding="leadEmail" type="email" value="${data.leadEmail || ''}" placeholder="name@hospital.org" /></label></div>`
+  ];
+  $('#onboarding-content').innerHTML = `<div class="onboarding-panel">${panels[onboardingStep]}<div class="dialog-actions"><button class="secondary" id="onboarding-back" ${onboardingStep===0?'disabled':''}>Back</button><button class="primary" id="onboarding-next">${onboardingStep===3?'Finish setup':'Continue'} <span>→</span></button></div></div>`;
+  const source = data.source || 'Municipal supply', areas = data.areas || 'Main building', tanks = Number(data.tanks || 0), services = data.services?.length ? data.services : ['Critical clinical units'];
+  const tankLabel = tanks ? `${tanks} storage tank${tanks === 1 ? '' : 's'}` : 'Direct distribution';
+  $('#map-status').textContent = data.complete ? 'BASELINE READY' : 'DRAFT MAP';
+  $('#onboarding-map').innerHTML = `<div class="map-node source"><span>◉</span><strong>${source}</strong><small>Water source</small></div><div class="map-connector"><i>→</i></div><div class="map-node site"><span>⌂</span><strong>${areas}</strong><small>${data.capacity || hospital.beds} beds / chairs</small></div><div class="map-branch"><div class="map-connector"><i>↓</i></div><div class="map-node storage"><span>▣</span><strong>${tankLabel}</strong><small>Storage & distribution</small></div><div class="map-connector"><i>→</i></div><div class="map-node critical"><span>✚</span><strong>${services.join(' · ')}</strong><small>Critical units</small></div></div>`;
+  document.querySelectorAll('[data-onboarding-step]').forEach(button=>button.onclick=()=>{onboardingStep=Number(button.dataset.onboardingStep);renderOnboarding();});
+  $('#onboarding-back').onclick=()=>{if(onboardingStep){onboardingStep--;renderOnboarding();}};
+  $('#onboarding-next').onclick=()=>{
+    const next = onboardingData();
+    document.querySelectorAll('[data-onboarding]').forEach(input=>next[input.dataset.onboarding]=input.value);
+    if(onboardingStep===2) next.services=[...document.querySelectorAll('[data-service]:checked')].map(input=>input.dataset.service);
+    next._step = Math.max(next._step || 0, onboardingStep + 1);
+    if(onboardingStep===3){ next.complete=true; saveOnboarding(next); renderOnboarding(); toast(`${hospital.name} is ready for monitoring.`); showPage('dashboard'); return; }
+    saveOnboarding(next); onboardingStep++; renderOnboarding();
+  };
+}
+function openLogin(){
+  $('#hospital-select').innerHTML = Object.entries(hospitals).map(([id,h])=>`<option value="${id}" ${id===activeHospital?'selected':''}>${h.name} — ${h.meta}</option>`).join('');
+  $('#login-email').value = '';
+  $('#login-password').value = '';
+  $('#hospital-login').showModal();
+  $('#login-email').focus();
+}
+$('#hospital-switcher').onclick = openLogin;
+$('#profile-switch').onclick = openLogin;
+$('#login-form').addEventListener('submit', event => {
+  if(!$('#login-email').checkValidity() || !$('#login-password').checkValidity()) { event.preventDefault(); return; }
+  activeHospital = $('#hospital-select').value;
+  localStorage.setItem('aquaguard-hospital', activeHospital);
+  renderHospital();
+  toast(`Connected to ${hospitals[activeHospital].name}.`);
+});
 function badge(level){ return `<span class="badge ${level === 'High' || level === 'Overdue' ? 'high' : level === 'Medium' ? 'medium' : 'low'}">${level}</span>`; }
 function renderAssets(){ $('#asset-grid').innerHTML = assets.map(a=>`<article class="asset"><span>${a[0]}</span><h3>${a[1]}</h3><p>${a[2]}</p><small>${a[3]}</small></article>`).join(''); }
 function renderRisks(){ $('#risk-table').innerHTML = risks.map(r=>`<tr><td><strong>${r[0]}</strong><small>${r[1]}</small></td><td>${badge(r[2])}</td><td>${r[3]}</td><td><div class="owner"><span class="avatar">${r[4]}</span>${r[5]}</div></td><td>${r[6]}</td></tr>`).join(''); $('#risk-count').textContent = risks.filter(r=>r[2] !== 'Low').length; }
@@ -33,4 +101,4 @@ $('#export-report').onclick=()=>toast('Your compliance report export is being pr
 function toast(message){const el=$('#toast');el.textContent=message;el.className='show';setTimeout(()=>el.className='',2800);}
 function renderActions(){const open=actions.filter(a=>a.status!=='Resolved');$('#action-summary').innerHTML=`<button><strong>${open.filter(a=>a.severity==='Critical').length}</strong><span>critical actions</span></button><button><strong>${open.filter(a=>a.due.includes('10 Sep')).length}</strong><span>due today</span></button><button><strong>${open.filter(a=>a.status==='Overdue').length}</strong><span>overdue</span></button><button><strong>${open.filter(a=>a.status==='Awaiting evidence').length}</strong><span>awaiting evidence</span></button>`;$('#attention-list').innerHTML=open.map(a=>`<article class="action-row ${a.severity.toLowerCase()}"><div class="action-priority">${a.severity[0]}</div><div class="action-main"><strong>${a.title}</strong><small>${a.area}</small><div class="action-meta">${badge(a.severity)} <span>Due ${a.due}</span><span class="owner"><span class="avatar">${a.initials}</span>${a.owner}</span></div></div><div class="action-state"><span>${a.status}</span><small>${a.escalation}</small></div><button class="text-button open-action" data-action="${a.id}">Open →</button></article>`).join('');document.querySelectorAll('.open-action').forEach(b=>b.onclick=()=>openAction(+b.dataset.action));}
 let selectedAction;function openAction(id){selectedAction=actions.find(a=>a.id===id);$('#action-title').textContent=selectedAction.title;$('#action-detail').innerHTML=`<div class="detail-grid"><p><b>Área / punto de muestreo</b>${selectedAction.area}</p><p><b>Lectura / observación</b>${selectedAction.reading}<br>${selectedAction.threshold}</p><p><b>Fecha y hora</b>10 Sep 2026 · 08:12 CET</p><p><b>Consecuencia operativa</b>${selectedAction.consequence}</p><p><b>Acción correctiva recomendada</b>${selectedAction.recommendation}</p><p><b>Persona responsable · deadline</b>${selectedAction.owner} · ${selectedAction.due}</p><p><b>Escalación</b>${selectedAction.escalation}</p><p><b>Historial de actividad</b>${selectedAction.history}</p></div>`;$('#action-dialog').showModal();}$('#resolve-action').onclick=()=>{$('#action-dialog').close();$('#resolve-dialog').showModal()};$('#save-resolution').onclick=()=>{if(!$('#resolution-notes').checkValidity()||!$('#resolution-owner').checkValidity())return;selectedAction.status='Resolved';selectedAction.history+=` · Resuelto por ${$('#resolution-owner').value}, 10 Sep 2026 · 09:05 CET`;selectedAction.evidence=$('#evidence-file').files[0]?.name||'Nota de acción registrada';$('#resolve-dialog').close();renderActions();toast('Action resolved and preserved in the audit trail.');};
-renderAssets();renderRisks();renderChecks();renderActions();
+renderHospital();renderAssets();renderRisks();renderChecks();renderActions();
