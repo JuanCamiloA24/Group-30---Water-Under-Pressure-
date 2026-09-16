@@ -1,0 +1,2 @@
+hospital_name,city,region,country,beds,latitude,longitude,buildings,storage_capacity_litres,water_supplier,critical_units,cooling_towers,team_lead_name
+Example demo hospital,Sevilla,Andalucía,Spain,350,37.3891,-5.9845,Main building,64000,EMASESA,"dialysis;icu;sterilisation",2,María López
