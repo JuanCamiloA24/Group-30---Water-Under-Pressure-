@@ -46,4 +46,4 @@ These questions aren't here to slow you down — they're part of what's being ev
 
 ## Our Approach
 
-*[To be filled in by the team at the end.]*
+**Our approach:** AquaGuard is a decision-support workspace for hospital facilities and water-safety teams. It combines a hospital baseline, risk register, monitoring evidence, corrective actions, and a PSA workflow. The dashboard retrieves a live Eurostat water-use indicator for Spain (`env_wat_abs`) to provide public-data context. Hospital readings and compliance records remain labelled as illustrative demo data.
