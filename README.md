@@ -46,4 +46,15 @@ These questions aren't here to slow you down — they're part of what's being ev
 
 ## Our Approach
 
-*[To be filled in by the team at the end.]*
+**Our approach:** AquaGuard is a decision-support workspace for hospital facilities and water-safety teams. It combines a hospital baseline, risk register, monitoring evidence, corrective actions, and a PSA workflow. The dashboard retrieves a live Eurostat water-use indicator for Spain (`env_wat_abs`) to provide public-data context. Hospital readings and compliance records remain labelled as illustrative demo data.
+
+### Project decisions
+
+- **Data:** the dashboard calls the public Eurostat API (`env_wat_abs`) for Spain; hospital readings and compliance records are illustrative demo values.
+- **API keys:** none are required for the selected Eurostat endpoint, and no secrets are stored in the repository.
+- **Attribution:** the dashboard links to Eurostat, Comunidad de Madrid, Canal de Isabel II, and Real Decreto 3/2023. Public figures are shown as context, not as hospital measurements.
+- **Storage:** no external dataset snapshot is committed; the app requests the public indicator at runtime.
+- **Robustness:** if Eurostat is unavailable or returns no values, the dashboard shows an explicit unavailable state and the rest of the workspace remains usable.
+- **Explainability:** every risk and action shows its area, severity, owner, deadline, consequence, and recommended corrective action.
+- **Business relevance:** the primary user is a hospital water-safety or facilities lead who must prioritise risks and prepare evidence for inspection.
+- **Deployment:** the current preview is local; no production URL or external backend is claimed yet.
